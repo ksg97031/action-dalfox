@@ -7,8 +7,8 @@ inputs:
   mode:
     description: 'Scanning Mode ( url / file / pipe / sxss )'
     required: true
-  target:
-    description: 'Target URL'
+  urls:
+    description: 'List of multiple urls'
     required: true
   cmd_options:
     description: 'Additional command line options'
@@ -17,9 +17,10 @@ outputs:
   RESULT: 
     description: 'Scan Result'    
 runs:
-  using: 'docker'
-  image: 'docker://hahwul/dalfox:latest'
-  args:
-    - 'bash'
-    - '-c'
-    - 'echo "${{ inputs.target }}" | /app/dalfox ${{ inputs.mode}} "${{ inputs.target }} --silence ${{ inputs.cmd_options }}"'
+  using: "composite"
+  steps:
+    - run: |
+        GO111MODULE=on go get github.com/hahwul/dalfox/v2
+        GO111MODULE=on go get -u github.com/tomnomnom/qsreplace
+        cat ${{ inputs.urls }} | grep "?" | /home/runner/go/bin/qsreplace -a | sort -u | /home/runner/go/bin/dalfox ${{ inputs.mode }} --silence ${{ inputs.cmd_options}}
+      shell: bash
