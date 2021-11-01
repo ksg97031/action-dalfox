@@ -22,5 +22,5 @@ runs:
     - run: |
         GO111MODULE=on go get github.com/hahwul/dalfox/v2
         GO111MODULE=on go get -u github.com/tomnomnom/qsreplace
-        cat ${{ inputs.urls }} | grep "?" | ~/go/bin/qsreplace -a | ~/go/bin/dalfox ${{ inputs.mode }} --silence-force ${{ inputs.cmd_options }}
+        cat ${{ inputs.urls }} | grep "?" | ~/go/bin/qsreplace -a | sort -u | ~/go/bin/dalfox ${{ inputs.mode }} --silence-force ${{ inputs.cmd_options }}
       shell: bash
